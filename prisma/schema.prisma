@@ -18,7 +18,7 @@ model KnowledgeDocument {
   id                   String              @id @default(uuid()) @db.Uuid
   sourceTitle          String
   sourceType           KnowledgeSourceType
-  sourceUrlOrCitation  String
+  sourceUrlOrCitation  String?
   publisher            String?
   publishedAt          DateTime?
   rawText              String
@@ -33,7 +33,6 @@ model KnowledgeChunk {
   chunkIndex Int
   embedding  Json?
   metadata   Json?
-  createdAt  DateTime          @default(now())
   document   KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   @@unique([documentId, chunkIndex])
