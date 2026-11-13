@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum KnowledgeSourceType {
+  heair_paper
+  framework
+  research_paper
+  best_practice
+}
+
+model KnowledgeDocument {
+  id                   String              @id @default(uuid()) @db.Uuid
+  sourceTitle          String
+  sourceType           KnowledgeSourceType
+  sourceUrlOrCitation  String
+  publisher            String?
+  publishedAt          DateTime?
+  rawText              String
+  createdAt            DateTime            @default(now())
+  chunks               KnowledgeChunk[]
+}
+
+model KnowledgeChunk {
+  id         String            @id @default(uuid()) @db.Uuid
+  documentId String            @db.Uuid
+  chunkText  String
+  chunkIndex Int
+  embedding  Json?
+  metadata   Json?
+  createdAt  DateTime          @default(now())
+  document   KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, chunkIndex])
+}
